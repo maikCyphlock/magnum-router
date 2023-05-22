@@ -1,13 +1,18 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import Router from './Router'
+import { cleanup, render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { getCurrentPath } from '../utils.js'
 import Route from './Route'
-import { render, screen, cleanup } from '@testing-library/react'
+import Router from './Router'
 
 // Tests that a valid route component is rendered.
 
+vi.mock('../utils.js', () => ({
+  getCurrentPath: vi.fn()
+}))
 describe('Router', () => {
   beforeEach(() => {
     cleanup()
+    vi.clearAllMocks()
   })
   it('should render without any components', () => {
     render(<Router routes={[]}/>)
@@ -37,6 +42,23 @@ describe('Router', () => {
   it('test_router_with_invalid_routes_arrays', () => {
     const invalidRoutes = [1, 2, 3]
     expect(() => render(<Router routes={invalidRoutes} />)).toThrow('Route must be an object')
+  })
+
+  it(' test_router_with_About_route', () => {
+    getCurrentPath.mockReturnValue('/about')
+    const Routes = [
+      {
+        path: '/',
+        Component: () => <h1>Home</h1>
+      },
+      {
+        path: '/about',
+        Component: () => <h1>About</h1>
+      }
+    ]
+    render(<Router routes={Routes}/>)
+
+    expect(screen.getByText('About')).toBeTruthy()
   })
 })
 
