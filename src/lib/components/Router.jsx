@@ -1,7 +1,18 @@
 import { EVENTS } from '../consts'
 import { useState, useEffect, Children } from 'react'
 import { match } from 'path-to-regexp'
+import { getCurrentPath } from '../utils'
 
+/**
+ * Renders a router component based on given routes and children components.
+ *
+ * @param {Object} options - The options object.
+ * @param {Array} options.routes - An array of routes.
+ * @param {ReactNode} options.children - The children components.
+ * @param {Function} options.defaultComponent - The default component to render on a 404.
+ * @return {ReactNode} The component that matches the current path or the default component.
+ * @throws {Error} Throws an error if routes is not an array or if route is not an object.
+ */
 function Router ({ routes = [], children, defaultComponent: DefaultComponet = () => <h1>404 not found </h1> }) {
   // throw an error if routes is not an array
 
@@ -15,10 +26,10 @@ function Router ({ routes = [], children, defaultComponent: DefaultComponet = ()
     }
   })
 
-  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+  const [currentPath, setCurrentPath] = useState(getCurrentPath())
   useEffect(() => {
     const onLocationChange = () => {
-      setCurrentPath(window.location.pathname)
+      setCurrentPath(getCurrentPath())
     }
 
     window.addEventListener(EVENTS.PUSHSTATE, onLocationChange)
